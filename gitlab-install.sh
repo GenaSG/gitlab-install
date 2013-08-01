@@ -145,7 +145,9 @@ sudo update-rc.d gitlab defaults 70 30
 # Test configuration
 sudo -u git -H bundle exec rake gitlab:env:info RAILS_ENV=production
 
-echo "********************************"
-echo "finished, you can configure nginx or apache"
-echo "needs to point to 127.0.0.1:3000 with proxy"
-echo "********************************"
+# Installing nginx
+sudo apt-get install -y nginx
+sudo wget https://raw.github.com/gitlabhq/gitlab-recipes/5-0-stable/nginx/gitlab -P /etc/nginx/sites-available/
+sudo ln -s /etc/nginx/sites-available/gitlab /etc/nginx/sites-enabled/gitlab
+sudo sed -i 's/YOUR_SERVER_IP:80/80/' /etc/nginx/sites-available/gitlab # Set Domain
+sudo sed -i "s/YOUR_SERVER_FQDN/${domain_name}/" /etc/nginx/sites-available/gitlab
