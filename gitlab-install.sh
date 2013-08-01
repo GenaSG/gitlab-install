@@ -111,15 +111,15 @@ sudo -u git -H cp config/unicorn.rb.example config/unicorn.rb
 #sudo nano config/unicorn.rb
 #sudo -u git -H sed -i '19s/.*/listen "127.0.0.1:3000"  # listen to port 8080 on the loopback interface/' config/unicorn.rb
 #sudo -u git -H sed -i '20s/.*/#listen "#{app_dir}\/tmp\/sockets\/gitlab.socket"/' config/unicorn.rb
-sudo -u git -H sed -i 's/\#listen \"127\.0\.0\.1\:8080\"/listen \"127\.0\.0\.1\:3000\"/' config/unicorn.rb
-sudo -u git -H sed -i 's/listen \"\#\{app_dir\}\/tmp\/sockets\/gitlab\.socket\"/\#listen \"\#\{app_dir\}\/tmp\/sockets\/gitlab\.socket\"/' config/unicorn.rb
+sudo -u git -H sed -i 's/\#listen\ \"127\.0\.0\.1\:8080\"/listen\ \"127\.0\.0\.1\:3000\"/' config/unicorn.rb
+sudo -u git -H sed -i 's/listen\ \"\#{app_dir}\/tmp\/sockets\/gitlab\.socket\"/\#listen\ \"\#{app_dir}\/tmp\/sockets\/gitlab\.socket\"/' config/unicorn.rb
 
 # Mysql
 sudo -u git cp config/database.yml.mysql config/database.yml
-sudo sed -i 's/"secure\ password"/"'${gitlabpass}'"/' config/database.yml # Insert the mysql root password.
+sudo -u git -H  sed -i 's/"secure\ password"/"'${gitlabpass}'"/' config/database.yml # Insert the mysql root password.
 #sudo sed -i "s/\ host:\ localhost/ host:\ ${domain_name}/" config/gitlab.yml
-sudo sed -i "s/ssh_host:\ localhost/ssh_host:\ ${domain_name}/" config/gitlab.yml
-sudo sed -i "s/notify@localhost/notify@${domain_name}/" config/gitlab.yml
+sudo -u git -H  sed -i "s/ssh_host:\ localhost/ssh_host:\ ${domain_name}/" config/gitlab.yml
+sudo -u git -H  sed -i "s/notify@localhost/notify@${domain_name}/" config/gitlab.yml
 #sudo nano config/database.yml
 #sudo -u git -H sed -i "10s/.*/  username: gitlab/" config/database.yml
 #sudo -u git -H sed -i "11s/.*/  password: ${gitlabpass}/" config/database.yml
