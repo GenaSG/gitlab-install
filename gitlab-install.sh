@@ -60,23 +60,13 @@ sudo -u git -H ./bin/install
 sudo apt-get install -y mysql-server mysql-client libmysqlclient-dev
 
 # Create a user for GitLab.
-#mysql -uroot -p$mysqlpass -e "CREATE USER 'gitlab'@'localhost' IDENTIFIED BY '$gitlabpass';"
-#
-## Create the GitLab production database
-#mysql -uroot -p$mysqlpass -e "CREATE DATABASE IF NOT EXISTS \`gitlabhq_production\` DEFAULT CHARACTER SET \`utf8\` COLLATE \`utf8_unicode_ci\`;"
-#
-## Grant the GitLab user necessary permissopns on the table.
-#mysql -uroot -p$mysqlpass -e "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER ON \`gitlabhq_production\`.* TO 'gitlab'@'localhost';"
-#
-## Quit the database session
-#mysql -uroot -p$mysqlpass -e "\\q;"
 mysql -uroot -p$mysqlpass << QUERY
 CREATE USER 'gitlab'@'localhost' IDENTIFIED BY '$gitlabpass';
 CREATE DATABASE IF NOT EXISTS \`gitlabhq_production\` DEFAULT CHARACTER SET \`utf8\` COLLATE \`utf8_unicode_ci\`;
 GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER ON \`gitlabhq_production\`.* TO 'gitlab'@'localhost';
 QUERY
 # Try connecting to the new database with the new user
-sudo -u git -H mysql -ugitlab -p$gitlabpass -D gitlabhq_production
+sudo -u git -H mysql -ugitlab -p$gitlabpass -D gitlabhq_production -e "\\q"
 
 # We'll install GitLab into home directory of the user "git"
 cd /home/git
@@ -98,8 +88,10 @@ sudo -u git -H cp config/gitlab.yml.example config/gitlab.yml
 # Make sure to change "localhost" to the fully-qualified domain name of your
 # host serving GitLab where necessary
 #sudo -u git -H nano config/gitlab.yml
-sudo -u git -H sed -i '18s/.*/    host: localhost/' config/gitlab.yml
-sudo -u git -H sed -i '19s/.*/    port: 3000/' config/gitlab.yml
+#sudo -u git -H sed -i '18s/.*/    host: localhost/' config/gitlab.yml
+#sudo -u git -H sed -i '19s/.*/    port: 3000/' config/gitlab.yml
+sudo -u git -H sed -i "s/\ host:\ localhost/\ host:\ ${domain_name}/" config/gitlab.yml
+sudo -u git -H sed -i 's/port:\ 80/port:\ 3000/' config/gitlab.yml
 
 # Make sure GitLab can write to the log/ and tmp/ directories
 sudo chown -R git log/
@@ -117,16 +109,22 @@ sudo chmod -R u+rwX  tmp/pids/
 # Copy the example Unicorn config
 sudo -u git -H cp config/unicorn.rb.example config/unicorn.rb
 #sudo nano config/unicorn.rb
-sudo -u git -H sed -i '19s/.*/listen "127.0.0.1:3000"  # listen to port 8080 on the loopback interface/' config/unicorn.rb
-sudo -u git -H sed -i '20s/.*/#listen "#{app_dir}\/tmp\/sockets\/gitlab.socket"/' config/unicorn.rb
+#sudo -u git -H sed -i '19s/.*/listen "127.0.0.1:3000"  # listen to port 8080 on the loopback interface/' config/unicorn.rb
+#sudo -u git -H sed -i '20s/.*/#listen "#{app_dir}\/tmp\/sockets\/gitlab.socket"/' config/unicorn.rb
+sudo -u git -H sed -i 's/\#listen \"127\.0\.0\.1\:8080\"/listen \"127\.0\.0\.1\:3000\"/' config/unicorn.rb
+sudo -u git -H sed -i 's/listen \"\#\{app_dir\}\/tmp\/sockets\/gitlab\.socket\"/\#listen \"\#\{app_dir\}\/tmp\/sockets\/gitlab\.socket\"/' config/unicorn.rb
 
 # Mysql
 sudo -u git cp config/database.yml.mysql config/database.yml
+sudo sed -i 's/"secure\ password"/"'${gitlabpass}'"/' config/database.yml # Insert the mysql root password.
+#sudo sed -i "s/\ host:\ localhost/ host:\ ${domain_name}/" config/gitlab.yml
+sudo sed -i "s/ssh_host:\ localhost/ssh_host:\ ${domain_name}/" config/gitlab.yml
+sudo sed -i "s/notify@localhost/notify@${domain_name}/" config/gitlab.yml
 #sudo nano config/database.yml
-sudo -u git -H sed -i "10s/.*/  username: gitlab/" config/database.yml
-sudo -u git -H sed -i "11s/.*/  password: ${gitlabpass}/" config/database.yml
-sudo -u git -H sed -i "24s/.*/  username: gitlab/" config/database.yml
-sudo -u git -H sed -i "25s/.*/  password: ${gitlabpass}/" config/database.yml
+#sudo -u git -H sed -i "10s/.*/  username: gitlab/" config/database.yml
+#sudo -u git -H sed -i "11s/.*/  password: ${gitlabpass}/" config/database.yml
+#sudo -u git -H sed -i "24s/.*/  username: gitlab/" config/database.yml
+#sudo -u git -H sed -i "25s/.*/  password: ${gitlabpass}/" config/database.yml
 
 # Charlock Holmes
 cd /home/git/gitlab
