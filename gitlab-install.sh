@@ -117,10 +117,10 @@ sudo -u git -H sed -i 's/listen\ \"\#{app_dir}\/tmp\/sockets\/gitlab\.socket\"/\
 # Mysql
 sudo -u git cp config/database.yml.mysql config/database.yml
 sudo -u git -H  sed -i 's/username\:\ root/username\:\ gitlab/g' config/database.yml
-sudo -u git -H  sed -i 's/secure\ password/${gitlabpass}/' config/database.yml # Insert the mysql root password.
+sudo -u git -H  sed -i "s/secure\ password/${gitlabpass}/" config/database.yml # Insert the mysql root password.
 #sudo sed -i "s/\ host:\ localhost/ host:\ ${domain_name}/" config/gitlab.yml
-sudo -u git -H  sed -i 's/ssh_host:\ localhost/ssh_host:\ ${domain_name}/' config/gitlab.yml
-sudo -u git -H  sed -i 's/notify@localhost/notify@${domain_name}/' config/gitlab.yml
+sudo -u git -H  sed -i "s/ssh_host:\ localhost/ssh_host:\ ${domain_name}/" config/gitlab.yml
+sudo -u git -H  sed -i "s/notify@localhost/notify@${domain_name}/" config/gitlab.yml
 #sudo nano config/database.yml
 #sudo -u git -H sed -i "10s/.*/  username: gitlab/" config/database.yml
 #sudo -u git -H sed -i "11s/.*/  password: ${gitlabpass}/" config/database.yml
