@@ -147,7 +147,7 @@ sudo -u git -H bundle exec rake gitlab:env:info RAILS_ENV=production
 
 # Installing nginx
 sudo apt-get install -y nginx
-sudo wget https://raw.github.com/gitlabhq/gitlab-recipes/5-0-stable/nginx/gitlab -P /etc/nginx/sites-available/
+sudo curl https://raw.github.com/gitlabhq/gitlab-recipes/5-0-stable/nginx/gitlab > /etc/nginx/sites-available/gitlab
 sudo ln -s /etc/nginx/sites-available/gitlab /etc/nginx/sites-enabled/gitlab
 sudo sed -i 's/YOUR_SERVER_IP:80/80/' /etc/nginx/sites-available/gitlab # Set Domain
 sudo sed -i "s/YOUR_SERVER_FQDN/${domain_name}/" /etc/nginx/sites-available/gitlab
