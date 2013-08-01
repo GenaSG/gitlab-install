@@ -23,14 +23,14 @@ sudo ln -s /usr/bin/python /usr/bin/python2
 # Install Ruby
 rm -rf /tmp/ruby
 mkdir /tmp/ruby && cd /tmp/ruby
-curl --progress http://ftp.ruby-lang.org/pub/ruby/1.9/ruby-1.9.3-p327.tar.gz | tar xz
-cd ruby-1.9.3-p327
+curl --progress ftp://ftp.ruby-lang.org/pub/ruby/2.0/ruby-2.0.0-p247.tar.gz | tar xz
+cd ruby-2.0.0-p247
 ./configure
 make
 sudo make install
 
 # Install Ruby Bundler
-sudo gem install bundler
+sudo gem install bundler --no-ri --no-rdoc
 
 # Create git user
 sudo adduser --disabled-login --gecos 'GitLab' git
