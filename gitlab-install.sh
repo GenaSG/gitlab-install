@@ -149,5 +149,5 @@ sudo -u git -H bundle exec rake gitlab:env:info RAILS_ENV=production
 
 echo "********************************"
 echo "finished, you can configure nginx or apache"
-echo "needs to point to 127.0.0.1:3000 with proxy
+echo "needs to point to 127.0.0.1:3000 with proxy"
 echo "********************************"
