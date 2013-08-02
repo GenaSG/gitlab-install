@@ -152,3 +152,7 @@ sudo curl https://raw.github.com/gitlabhq/gitlab-recipes/5-0-stable/nginx/gitlab
 sudo ln -s /etc/nginx/sites-available/gitlab /etc/nginx/sites-enabled/gitlab
 sudo sed -i 's/YOUR_SERVER_IP:80/80/' /etc/nginx/sites-available/gitlab # Set Domain
 sudo sed -i "s/YOUR_SERVER_FQDN/${domain_name}/" /etc/nginx/sites-available/gitlab
+
+# Start services
+sudo service gitlab start
+sudo service nginx start
