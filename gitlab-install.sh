@@ -105,6 +105,8 @@ sudo chmod -R u+rwX  tmp/pids/
 
 # Copy the example Unicorn config
 sudo -u git -H cp config/unicorn.rb.example config/unicorn.rb
+# Set worker timeout to 60 sec
+sudo -u git -H sed -i 's/timeout\ 30/timeout\ 60/' config/unicorn.rb
 # Disable listen socket
 #sudo -u git -H sed -i 's/\#listen\ \"127\.0\.0\.1\:8080\"/listen\ \"127\.0\.0\.1\:3000\"/' config/unicorn.rb
 #sudo -u git -H sed -i 's/listen\ \"\#{app_dir}\/tmp\/sockets\/gitlab\.socket\"/\#listen\ \"\#{app_dir}\/tmp\/sockets\/gitlab\.socket\"/' config/unicorn.rb
