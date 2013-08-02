@@ -88,7 +88,7 @@ sudo -u git -H cp config/gitlab.yml.example config/gitlab.yml
 # Make sure to change "localhost" to the fully-qualified domain name of your
 # host serving GitLab where necessary
 sudo -u git -H sed -i "s/\ host:\ localhost/\ host:\ ${domain_name}/" config/gitlab.yml
-sudo -u git -H sed -i 's/port:\ 80/port:\ 3000/' config/gitlab.yml
+#sudo -u git -H sed -i 's/port:\ 80/port:\ 3000/' config/gitlab.yml
 
 # Make sure GitLab can write to the log/ and tmp/ directories
 sudo chown -R git log/
@@ -149,3 +149,7 @@ sudo sed -i "s/YOUR_SERVER_FQDN/${domain_name}/" /etc/nginx/sites-available/gitl
 # Start services
 sudo service gitlab start
 sudo service nginx start
+
+echo "login.........admin@local.host"
+echo "password......5iveL!fe"
+
