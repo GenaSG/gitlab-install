@@ -145,6 +145,7 @@ sudo -u git -H git config --global user.email "gitlab@localhost"
 sudo apt-get install -y nginx
 sudo curl https://raw.github.com/gitlabhq/gitlab-recipes/master/nginx/gitlab-https -o /etc/nginx/sites-available/gitlab-https
 sudo sed -i 's/unix\:\/home\/gitlab/unix\:\/home\/git/g' /etc/nginx/sites-available/gitlab-https
+sudo sed -i 's/TLSv2//g' /etc/nginx/sites-available/gitlab-https
 KEY=$(find /home/git/ | grep -i server.key | sed 's/\//\\\//g')
 CRT=$(find /home/git/ | grep -i server.crt | sed 's/\//\\\//g')
 sudo sed -i "s/gitlab\.key/${KEY}/g" /etc/nginx/sites-available/gitlab-https
