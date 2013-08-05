@@ -1,9 +1,18 @@
 echo "********************************"
 echo "    GitLab Install script"
 echo "********************************"
-read -s -p "> MySQL root pass: " mysqlpass
+read -s -p "> MySQL root password(Default:Pa55w0rd): " mysqlpass
 echo -e "\\n"
-read -p "> Domain name: " domain_name
+read -p "> Domain name(Default:localhost): " domain_name
+echo -e "\\n"
+read -p "> Install version 5.3?(yes/no)(default:5.0): " use53
+echo -e "\\n"
+read -p "> Use https?(yes/no)(default:http): " useSSL
+[ -z mysqlpass ] && mysqlpass=Pa55w0rd
+[ -z domain_name ] && domain_name=localhost
+[ -z use53 ] && use53=no
+[ -z useSSL ] && useSSL=no
+
 # Needed to create a unique password non-interactively.
 sudo apt-get install -y makepasswd 
 # Generate a random gitlab MySQL password
@@ -41,10 +50,17 @@ cd /home/git
 # Clone gitlab shell
 sudo -u git -H git clone https://github.com/gitlabhq/gitlab-shell.git
 cd gitlab-shell
-
+if [ use53=="yes" ]
+then
+	sudo -u git -H git checkout v1.4.0
+	sudo -u git -H git checkout -b v1.4.0
+else
+	sudo -u git -H git checkout v1.1.0
+	sudo -u git -H git checkout -b v1.1.0
+fi
 # switch to right version for v5.0
-sudo -u git -H git checkout v1.1.0
-sudo -u git -H git checkout -b v1.1.0
+#sudo -u git -H git checkout v1.1.0
+#sudo -u git -H git checkout -b v1.1.0
 # switch to right version for v5.3
 #sudo -u git -H git checkout v1.4.0
 #sudo -u git -H git checkout -b v1.4.0
@@ -81,8 +97,15 @@ sudo -u git -H git clone https://github.com/gitlabhq/gitlabhq.git gitlab
 # Go to gitlab dir
 cd /home/git/gitlab
 
+if [ use53=="yes" ]
+then
+        sudo -u git -H git checkout 5-3-stable
+else
+        sudo -u git -H git checkout 5-0-stable
+fi
+
 # Checkout to stable release 5.0
-sudo -u git -H git checkout 5-0-stable
+#sudo -u git -H git checkout 5-0-stable
 # Checkout to stable release 5.3 
 #sudo -u git -H git checkout 5-3-stable
 
@@ -113,6 +136,8 @@ sudo chmod -R u+rwX  tmp/pids/
 sudo -u git -H cp config/unicorn.rb.example config/unicorn.rb
 # Set worker timeout to 60 sec
 sudo -u git -H sed -i 's/timeout\ 30/timeout\ 60/' config/unicorn.rb
+#For 5.3 version using puma
+#sudo -u git -H cp config/puma.rb.example config/puma.rb
 
 # Disable listen socket
 #sudo -u git -H sed -i 's/\#listen\ \"127\.0\.0\.1\:8080\"/listen\ \"127\.0\.0\.1\:80\"/' config/unicorn.rb
@@ -154,25 +179,30 @@ sudo -u git -H git config --global user.email "gitlab@localhost"
 # Installing nginx
 sudo apt-get install -y nginx
 # Enable HTTPS
-sudo curl https://raw.github.com/gitlabhq/gitlab-recipes/master/nginx/gitlab-https -o /etc/nginx/sites-available/gitlab-https
-sudo sed -i 's/unix\:\/home\/gitlab/unix\:\/home\/git/g' /etc/nginx/sites-available/gitlab-https
-sudo sed -i 's/TLSv2//g' /etc/nginx/sites-available/gitlab-https
-KEY=$(find /home/git/ | grep -i server.key | sed 's/\//\\\//g')
-CRT=$(find /home/git/ | grep -i server.crt | sed 's/\//\\\//g')
-sudo sed -i "s/gitlab\.key/${KEY}/g" /etc/nginx/sites-available/gitlab-https
-sudo sed -i "s/gitlab\.crt/${CRT}/g" /etc/nginx/sites-available/gitlab-https
-sudo -u git -H  sed -i 's/https\:\ false/https\:\ true/' config/gitlab.yml
-sudo sed -i "s/gitlab.stardrad.com/${domain_name}/g" /etc/nginx/sites-available/gitlab-https
-sudo ln -s /etc/nginx/sites-available/gitlab-https /etc/nginx/sites-enabled/gitlab-https
-# HTTP if needed
-#sudo curl https://raw.github.com/gitlabhq/gitlab-recipes/5-0-stable/nginx/gitlab -o /etc/nginx/sites-available/gitlab
-#sudo ln -s /etc/nginx/sites-available/gitlab /etc/nginx/sites-enabled/gitlab
-#
+if [ useSSL=="yes" ]
+then
+	sudo curl https://raw.github.com/gitlabhq/gitlab-recipes/master/nginx/gitlab-https -o /etc/nginx/sites-available/gitlab-https
+	sudo sed -i 's/unix\:\/home\/gitlab/unix\:\/home\/git/g' /etc/nginx/sites-available/gitlab-https
+	sudo sed -i 's/TLSv2//g' /etc/nginx/sites-available/gitlab-https
+	KEY=$(find /home/git/ | grep -i server.key | sed 's/\//\\\//g')
+	CRT=$(find /home/git/ | grep -i server.crt | sed 's/\//\\\//g')
+	sudo sed -i "s/gitlab\.key/${KEY}/g" /etc/nginx/sites-available/gitlab-https
+	sudo sed -i "s/gitlab\.crt/${CRT}/g" /etc/nginx/sites-available/gitlab-https
+	sudo -u git -H  sed -i 's/https\:\ false/https\:\ true/' config/gitlab.yml
+	sudo sed -i "s/gitlab.stardrad.com/${domain_name}/g" /etc/nginx/sites-available/gitlab-https
+	sudo ln -s /etc/nginx/sites-available/gitlab-https /etc/nginx/sites-enabled/gitlab-https
+	sudo sed -i "s/Domain_NAME/${domain_name}/" /etc/nginx/sites-available/gitlab-https
+else
+	sudo curl https://raw.github.com/gitlabhq/gitlab-recipes/5-0-stable/nginx/gitlab -o /etc/nginx/sites-available/gitlab
+	sudo ln -s /etc/nginx/sites-available/gitlab /etc/nginx/sites-enabled/gitlab
+	sudo sed -i 's/YOUR_SERVER_IP:80/\*\:80/' /etc/nginx/sites-available/gitlab # Set Domain
+	sudo sed -i "s/YOUR_SERVER_FQDN/${domain_name}/" /etc/nginx/sites-available/gitlab
+fi
+
 rm -f /etc/nginx/sites-enabled/default
 
-#sudo sed -i 's/YOUR_SERVER_IP:80/\*\:80/' /etc/nginx/sites-available/gitlab # Set Domain
-#sudo sed -i "s/YOUR_SERVER_FQDN/${domain_name}/" /etc/nginx/sites-available/gitlab
-sudo sed -i "s/Domain_NAME/${domain_name}/" /etc/nginx/sites-available/gitlab-https
+# Check if socket folder exists
+[ -e /home/git/gitlab/tmp/sockets ] || sudo -u git mkdir /home/git/gitlab/tmp/sockets
 
 # Start services
 sudo service gitlab start
