@@ -133,10 +133,19 @@ sudo -u git -H mkdir /home/git/gitlab-satellites
 sudo -u git -H mkdir tmp/pids/
 sudo chmod -R u+rwX  tmp/pids/
 
+if [ use53=="yes" ]
+then
+        sudo -u git -H cp config/unicorn.rb.example config/unicorn.rb
+	sudo -u git -H sed -i 's/timeout\ 30/timeout\ 60/' config/unicorn.rb
+else
+        sudo -u git -H cp config/puma.rb.example config/puma.rb
+fi
+
+
 # Copy the example Unicorn config
-sudo -u git -H cp config/unicorn.rb.example config/unicorn.rb
+#sudo -u git -H cp config/unicorn.rb.example config/unicorn.rb
 # Set worker timeout to 60 sec
-sudo -u git -H sed -i 's/timeout\ 30/timeout\ 60/' config/unicorn.rb
+#sudo -u git -H sed -i 's/timeout\ 30/timeout\ 60/' config/unicorn.rb
 #For 5.3 version using puma
 #sudo -u git -H cp config/puma.rb.example config/puma.rb
 
