@@ -13,6 +13,7 @@ read -p "> Use https?(yes/no)(default:http): " useSSL
 [ -z use53 ] && use53=no
 [ -z useSSL ] && useSSL=no
 
+sudo apt-get update
 # Needed to create a unique password non-interactively.
 sudo apt-get install -y makepasswd 
 # Generate a random gitlab MySQL password
