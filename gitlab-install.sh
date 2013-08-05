@@ -59,19 +59,12 @@ else
 	sudo -u git -H git checkout v1.1.0
 	sudo -u git -H git checkout -b v1.1.0
 fi
-# switch to right version for v5.0
-#sudo -u git -H git checkout v1.1.0
-#sudo -u git -H git checkout -b v1.1.0
-# switch to right version for v5.3
-#sudo -u git -H git checkout v1.4.0
-#sudo -u git -H git checkout -b v1.4.0
-
 
 sudo -u git -H cp config.yml.example config.yml
 
 # Edit config and replace gitlab_url
 # with something like 'http://domain.com/'
-#sudo -u git -H nano config.yml
+
 sudo -u git -H sed -i '5s/.*/gitlab_url: "http:\/\/${domain_name}\/"/' config.yml
 
 # Do setup
@@ -105,11 +98,6 @@ else
         sudo -u git -H git checkout 5-0-stable
 fi
 
-# Checkout to stable release 5.0
-#sudo -u git -H git checkout 5-0-stable
-# Checkout to stable release 5.3 
-#sudo -u git -H git checkout 5-3-stable
-
 cd /home/git/gitlab
 
 # Copy the example GitLab config
@@ -135,20 +123,12 @@ sudo chmod -R u+rwX  tmp/pids/
 
 if [ use53=="yes" ]
 then
-	 sudo -u git -H cp config/puma.rb.example config/puma.rb
+	sudo -u git -H cp config/puma.rb.example config/puma.rb
 
 else
 	sudo -u git -H cp config/unicorn.rb.example config/unicorn.rb
 	sudo -u git -H sed -i 's/timeout\ 30/timeout\ 60/' config/unicorn.rb
 fi
-
-
-# Copy the example Unicorn config
-#sudo -u git -H cp config/unicorn.rb.example config/unicorn.rb
-# Set worker timeout to 60 sec
-#sudo -u git -H sed -i 's/timeout\ 30/timeout\ 60/' config/unicorn.rb
-#For 5.3 version using puma
-#sudo -u git -H cp config/puma.rb.example config/puma.rb
 
 # Disable listen socket
 #sudo -u git -H sed -i 's/\#listen\ \"127\.0\.0\.1\:8080\"/listen\ \"127\.0\.0\.1\:80\"/' config/unicorn.rb
