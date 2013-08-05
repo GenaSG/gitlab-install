@@ -131,7 +131,9 @@ sudo gem install charlock_holmes --version '0.6.9'
 
 # First run
 sudo -u git -H bundle install --deployment --without development test postgres
-sudo -u git -H bundle exec rake gitlab:setup RAILS_ENV=production
+sudo -u git -H bundle exec rake gitlab:setup RAILS_ENV=production << EOF
+yes
+EOF
 
 # Init scripts
 #sudo curl --output /etc/init.d/gitlab https://raw.github.com/gitlabhq/gitlab-recipes/5-0-stable/init.d/gitlab
