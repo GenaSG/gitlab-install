@@ -45,6 +45,10 @@ cd gitlab-shell
 # switch to right version for v5.0
 sudo -u git -H git checkout v1.1.0
 sudo -u git -H git checkout -b v1.1.0
+# switch to right version for v5.3
+#sudo -u git -H git checkout v1.4.0
+#sudo -u git -H git checkout -b v1.4.0
+
 
 sudo -u git -H cp config.yml.example config.yml
 
@@ -77,8 +81,10 @@ sudo -u git -H git clone https://github.com/gitlabhq/gitlabhq.git gitlab
 # Go to gitlab dir
 cd /home/git/gitlab
 
-# Checkout to stable release
+# Checkout to stable release 5.0
 sudo -u git -H git checkout 5-0-stable
+# Checkout to stable release 5.3 
+#sudo -u git -H git checkout 5-3-stable
 
 cd /home/git/gitlab
 
@@ -107,6 +113,7 @@ sudo chmod -R u+rwX  tmp/pids/
 sudo -u git -H cp config/unicorn.rb.example config/unicorn.rb
 # Set worker timeout to 60 sec
 sudo -u git -H sed -i 's/timeout\ 30/timeout\ 60/' config/unicorn.rb
+
 # Disable listen socket
 #sudo -u git -H sed -i 's/\#listen\ \"127\.0\.0\.1\:8080\"/listen\ \"127\.0\.0\.1\:8080\"/' config/unicorn.rb
 #sudo -u git -H sed -i 's/listen\ \"\#{app_dir}\/tmp\/sockets\/gitlab\.socket\"/\#listen\ \"\#{app_dir}\/tmp\/sockets\/gitlab\.socket\"/' config/unicorn.rb
@@ -127,7 +134,8 @@ sudo -u git -H bundle install --deployment --without development test postgres
 sudo -u git -H bundle exec rake gitlab:setup RAILS_ENV=production
 
 # Init scripts
-sudo curl --output /etc/init.d/gitlab https://raw.github.com/gitlabhq/gitlab-recipes/5-0-stable/init.d/gitlab
+#sudo curl --output /etc/init.d/gitlab https://raw.github.com/gitlabhq/gitlab-recipes/5-0-stable/init.d/gitlab
+sudo cp lib/support/init.d/gitlab /etc/init.d/gitlab
 sudo chmod +x /etc/init.d/gitlab
 
 sudo update-rc.d gitlab defaults 70 30
@@ -143,6 +151,7 @@ sudo -u git -H git config --global user.email "gitlab@localhost"
 
 # Installing nginx
 sudo apt-get install -y nginx
+# Enable HTTPS
 sudo curl https://raw.github.com/gitlabhq/gitlab-recipes/master/nginx/gitlab-https -o /etc/nginx/sites-available/gitlab-https
 sudo sed -i 's/unix\:\/home\/gitlab/unix\:\/home\/git/g' /etc/nginx/sites-available/gitlab-https
 sudo sed -i 's/TLSv2//g' /etc/nginx/sites-available/gitlab-https
@@ -150,14 +159,15 @@ KEY=$(find /home/git/ | grep -i server.key | sed 's/\//\\\//g')
 CRT=$(find /home/git/ | grep -i server.crt | sed 's/\//\\\//g')
 sudo sed -i "s/gitlab\.key/${KEY}/g" /etc/nginx/sites-available/gitlab-https
 sudo sed -i "s/gitlab\.crt/${CRT}/g" /etc/nginx/sites-available/gitlab-https
-# Enable HTTPS
 sudo -u git -H  sed -i 's/https\:\ false/https\:\ true/' config/gitlab.yml
 sudo sed -i "s/gitlab.stardrad.com/${domain_name}/g" /etc/nginx/sites-available/gitlab-https
-
+sudo ln -s /etc/nginx/sites-available/gitlab-https /etc/nginx/sites-enabled/gitlab-https
+# HTTP if needed
 #sudo curl https://raw.github.com/gitlabhq/gitlab-recipes/5-0-stable/nginx/gitlab -o /etc/nginx/sites-available/gitlab
 #sudo ln -s /etc/nginx/sites-available/gitlab /etc/nginx/sites-enabled/gitlab
-sudo ln -s /etc/nginx/sites-available/gitlab-https /etc/nginx/sites-enabled/gitlab-https
+#
 rm -f /etc/nginx/sites-enabled/default
+
 sudo sed -i 's/YOUR_SERVER_IP:80/\*\:80/' /etc/nginx/sites-available/gitlab # Set Domain
 sudo sed -i "s/YOUR_SERVER_FQDN/${domain_name}/" /etc/nginx/sites-available/gitlab
 
