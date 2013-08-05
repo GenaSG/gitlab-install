@@ -135,10 +135,11 @@ sudo chmod -R u+rwX  tmp/pids/
 
 if [ use53=="yes" ]
 then
-        sudo -u git -H cp config/unicorn.rb.example config/unicorn.rb
-	sudo -u git -H sed -i 's/timeout\ 30/timeout\ 60/' config/unicorn.rb
+	 sudo -u git -H cp config/puma.rb.example config/puma.rb
+
 else
-        sudo -u git -H cp config/puma.rb.example config/puma.rb
+	sudo -u git -H cp config/unicorn.rb.example config/unicorn.rb
+	sudo -u git -H sed -i 's/timeout\ 30/timeout\ 60/' config/unicorn.rb
 fi
 
 
