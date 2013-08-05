@@ -108,7 +108,7 @@ sudo -u git -H cp config/unicorn.rb.example config/unicorn.rb
 # Set worker timeout to 60 sec
 sudo -u git -H sed -i 's/timeout\ 30/timeout\ 60/' config/unicorn.rb
 # Disable listen socket
-#sudo -u git -H sed -i 's/\#listen\ \"127\.0\.0\.1\:8080\"/listen\ \"127\.0\.0\.1\:3000\"/' config/unicorn.rb
+#sudo -u git -H sed -i 's/\#listen\ \"127\.0\.0\.1\:8080\"/listen\ \"127\.0\.0\.1\:8080\"/' config/unicorn.rb
 #sudo -u git -H sed -i 's/listen\ \"\#{app_dir}\/tmp\/sockets\/gitlab\.socket\"/\#listen\ \"\#{app_dir}\/tmp\/sockets\/gitlab\.socket\"/' config/unicorn.rb
 
 # Mysql
@@ -143,9 +143,18 @@ sudo -u git -H git config --global user.email "gitlab@localhost"
 
 # Installing nginx
 sudo apt-get install -y nginx
-#sudo curl https://raw.github.com/gitlabhq/gitlab-recipes/master/nginx/gitlab-https -o /etc/nginx/sites-available/gitlab-https
-sudo curl https://raw.github.com/gitlabhq/gitlab-recipes/5-0-stable/nginx/gitlab -o /etc/nginx/sites-available/gitlab
-sudo ln -s /etc/nginx/sites-available/gitlab /etc/nginx/sites-enabled/gitlab
+sudo curl https://raw.github.com/gitlabhq/gitlab-recipes/master/nginx/gitlab-https -o /etc/nginx/sites-available/gitlab-https
+sudo sed -i 's/unix\:\/home\/gitlab/unix\:\/home\/git/g' /etc/nginx/sites-available/gitlab-https
+KEY=$(find /home/git/ | grep -i server.key | sed 's/\//\\\//g')
+CRT=$(find /home/git/ | grep -i server.crt | sed 's/\//\\\//g')
+sudo -i sed "s/gitlab\.key/${KEY}/g" /etc/nginx/sites-available/gitlab-https
+sudo -i sed "s/gitlab\.crt/${CRT}/g" /etc/nginx/sites-available/gitlab-https
+sudo sed -i "s/gitlab.stardrad.com/${domain_name}/g" /etc/nginx/sites-available/gitlab-https
+
+#sudo curl https://raw.github.com/gitlabhq/gitlab-recipes/5-0-stable/nginx/gitlab -o /etc/nginx/sites-available/gitlab
+#sudo ln -s /etc/nginx/sites-available/gitlab /etc/nginx/sites-enabled/gitlab
+sudo ln -s /etc/nginx/sites-available/gitlab-https /etc/nginx/sites-enabled/gitlab-https
+rm -f /etc/nginx/sites-enabled/default
 sudo sed -i 's/YOUR_SERVER_IP:80/\*\:80/' /etc/nginx/sites-available/gitlab # Set Domain
 sudo sed -i "s/YOUR_SERVER_FQDN/${domain_name}/" /etc/nginx/sites-available/gitlab
 
