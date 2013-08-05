@@ -147,8 +147,10 @@ sudo curl https://raw.github.com/gitlabhq/gitlab-recipes/master/nginx/gitlab-htt
 sudo sed -i 's/unix\:\/home\/gitlab/unix\:\/home\/git/g' /etc/nginx/sites-available/gitlab-https
 KEY=$(find /home/git/ | grep -i server.key | sed 's/\//\\\//g')
 CRT=$(find /home/git/ | grep -i server.crt | sed 's/\//\\\//g')
-sudo -i sed "s/gitlab\.key/${KEY}/g" /etc/nginx/sites-available/gitlab-https
-sudo -i sed "s/gitlab\.crt/${CRT}/g" /etc/nginx/sites-available/gitlab-https
+sudo sed -i "s/gitlab\.key/${KEY}/g" /etc/nginx/sites-available/gitlab-https
+sudo sed -i "s/gitlab\.crt/${CRT}/g" /etc/nginx/sites-available/gitlab-https
+# Enable HTTPS
+sudo -u git -H  sed -i 's/https\:\ false/https\:\ true/' config/gitlab.yml
 sudo sed -i "s/gitlab.stardrad.com/${domain_name}/g" /etc/nginx/sites-available/gitlab-https
 
 #sudo curl https://raw.github.com/gitlabhq/gitlab-recipes/5-0-stable/nginx/gitlab -o /etc/nginx/sites-available/gitlab
