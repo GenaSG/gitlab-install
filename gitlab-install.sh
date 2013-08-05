@@ -210,7 +210,7 @@ else
 	sudo sed -i "s/YOUR_SERVER_FQDN/${domain_name}/" /etc/nginx/sites-available/gitlab
 fi
 
-rm -f /etc/nginx/sites-enabled/default
+sudo rm -f /etc/nginx/sites-enabled/default
 
 # Check if socket folder exists
 [ -e /home/git/gitlab/tmp/sockets ] || sudo -u git mkdir /home/git/gitlab/tmp/sockets
