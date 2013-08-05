@@ -170,8 +170,9 @@ sudo ln -s /etc/nginx/sites-available/gitlab-https /etc/nginx/sites-enabled/gitl
 #
 rm -f /etc/nginx/sites-enabled/default
 
-sudo sed -i 's/YOUR_SERVER_IP:80/\*\:80/' /etc/nginx/sites-available/gitlab # Set Domain
-sudo sed -i "s/YOUR_SERVER_FQDN/${domain_name}/" /etc/nginx/sites-available/gitlab
+#sudo sed -i 's/YOUR_SERVER_IP:80/\*\:80/' /etc/nginx/sites-available/gitlab # Set Domain
+#sudo sed -i "s/YOUR_SERVER_FQDN/${domain_name}/" /etc/nginx/sites-available/gitlab
+sudo sed -i "s/Domain_NAME/${domain_name}/" /etc/nginx/sites-available/gitlab-https
 
 # Start services
 sudo service gitlab start
