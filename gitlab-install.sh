@@ -183,6 +183,8 @@ then
 	sudo sed -i "s/gitlab.stardrad.com/${domain_name}/g" /etc/nginx/sites-available/gitlab-https
 	sudo ln -s /etc/nginx/sites-available/gitlab-https /etc/nginx/sites-enabled/gitlab-https
 	sudo sed -i "s/Domain_NAME/${domain_name}/" /etc/nginx/sites-available/gitlab-https
+	sudo -u git -H sed -i  "s/http/https/g" /home/git/gitlab-shell/config.yml
+	sudo -u git -H sed -i  "s/ self_signed_cert: true/ self_signed_cert: false/g" /home/git/gitlab-shell/config.yml
 else
 	sudo curl https://raw.github.com/gitlabhq/gitlab-recipes/5-0-stable/nginx/gitlab -o /etc/nginx/sites-available/gitlab
 	sudo ln -s /etc/nginx/sites-available/gitlab /etc/nginx/sites-enabled/gitlab
