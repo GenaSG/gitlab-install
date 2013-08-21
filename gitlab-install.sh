@@ -65,7 +65,7 @@ sudo -u git -H cp config.yml.example config.yml
 # Edit config and replace gitlab_url
 # with something like 'http://domain.com/'
 
-sudo -u git -H sed -i '5s/.*/gitlab_url: "http:\/\/${domain_name}\/"/' config.yml
+sudo -u git -H sed -i  "s/localhost/${domain_name}/g" config.yml
 
 # Do setup
 sudo -u git -H ./bin/install
