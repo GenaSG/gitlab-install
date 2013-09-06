@@ -172,7 +172,7 @@ sudo apt-get install -y nginx
 # Enable HTTPS
 if [ useSSL=="yes" ]
 then
-	sudo curl https://raw.github.com/gitlabhq/gitlab-recipes/master/nginx/gitlab-https -o /etc/nginx/sites-available/gitlab-https
+	sudo curl https://raw.github.com/gitlabhq/gitlab-recipes/master/web-server/nginx/gitlab-ssl -o /etc/nginx/sites-available/gitlab-https
 	sudo sed -i 's/unix\:\/home\/gitlab/unix\:\/home\/git/g' /etc/nginx/sites-available/gitlab-https
 	sudo sed -i 's/TLSv2//g' /etc/nginx/sites-available/gitlab-https
 	KEY=$(find /home/git/ | grep -i server.key | sed 's/\//\\\//g')
