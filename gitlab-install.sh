@@ -177,8 +177,8 @@ then
 	sudo sed -i 's/TLSv2//g' /etc/nginx/sites-available/gitlab-https
 	KEY=$(find /home/git/ | grep -i server.key | sed 's/\//\\\//g')
 	CRT=$(find /home/git/ | grep -i server.crt | sed 's/\//\\\//g')
-	sudo sed -i "s/gitlab\.key/${KEY}/g" /etc/nginx/sites-available/gitlab-https
-	sudo sed -i "s/gitlab\.crt/${CRT}/g" /etc/nginx/sites-available/gitlab-https
+	sudo sed -i "s/\/etc\/nginx\/gitlab\.key/${KEY}/g" /etc/nginx/sites-available/gitlab-https
+	sudo sed -i "s/\/etc\/nginx\/gitlab\.crt/${CRT}/g" /etc/nginx/sites-available/gitlab-https
 	sudo -u git -H  sed -i 's/https\:\ false/https\:\ true/' config/gitlab.yml
 	sudo sed -i "s/gitlab.stardrad.com/${domain_name}/g" /etc/nginx/sites-available/gitlab-https
 	sudo ln -s /etc/nginx/sites-available/gitlab-https /etc/nginx/sites-enabled/gitlab-https
