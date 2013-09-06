@@ -181,6 +181,7 @@ then
 	sudo sed -i "s/\/etc\/nginx\/gitlab\.crt/${CRT}/g" /etc/nginx/sites-available/gitlab-https
 	sudo -u git -H  sed -i 's/https\:\ false/https\:\ true/' config/gitlab.yml
 	sudo sed -i "s/gitlab.stardrad.com/${domain_name}/g" /etc/nginx/sites-available/gitlab-https
+	sudo sed -i "s/git.example.com/${domain_name}/g" /etc/nginx/sites-available/gitlab-https
 	sudo ln -s /etc/nginx/sites-available/gitlab-https /etc/nginx/sites-enabled/gitlab-https
 	sudo sed -i "s/Domain_NAME/${domain_name}/" /etc/nginx/sites-available/gitlab-https
 	sudo -u git -H sed -i  "s/http/https/g" /home/git/gitlab-shell/config.yml
